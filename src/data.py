@@ -13,23 +13,35 @@ def load_csv(path: str | Path) -> pd.DataFrame:
     :return: A pandas DataFrame containing the data from the CSV file.
     :rtype: Pd.DataFrame
     """
-
     return pd.read_csv(path)
 
 
 def basic_clean(df: pd.DataFrame) -> pd.DataFrame:
-    out = df.copy()
+    """
+    Clean and preprocess a given DataFrame for further analysis.
 
-    # Remove customers' IDs because it's going to interfere with get_dummies
-    df_no_ids = out.iloc[:,1:]
+    This function performs the following operations:
+    1. Removes the first column of the DataFrame as it typically contains customer IDs,
+       which may interfere with further data processing.
+    2. Converts the 'Churn' column into binary values where 'Yes' is mapped to 1 and
+       'No' is mapped to 0.
+    3. Converts the 'TotalCharges' column to a numeric data type. Any values that cannot
+       be converted to numeric are coerced to NaN.
+
+    :param df: A pandas DataFrame containing the input data to be cleaned and preprocessed.
+    :type df: pd.DataFrame
+    :return: The cleaned and preprocessed DataFrame with customer IDs removed, Churn
+             encoded as binary, and TotalCharges converted to numeric.
+    :rtype: pd.DataFrame
+    """
+    # Remove customers' IDs (first column) because it's going to interfere with get_dummies
+    df_no_ids = df.drop(df.columns[0], axis=1)
 
     # Convert Churn data to binary
     df_no_ids['Churn'] = df_no_ids['Churn'].map({'Yes': 1, 'No': 0}).astype(int)
-
-    cat_cols = df_no_ids.select_dtypes(include=['object', 'category', 'bool']).columns
 
     # Convert TotalCharges to numeric
     df_no_ids.TotalCharges = pd.to_numeric(df_no_ids.TotalCharges, errors='coerce')
     df_no_ids.isnull().sum()
 
-    return out
+    return df_no_ids

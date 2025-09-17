@@ -15,12 +15,16 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     :return: A transformed DataFrame with one-hot encoded columns.
     :rtype: pd.DataFrame
     """
-
     cat_cols = df.select_dtypes(include=['object', 'category', 'bool']).columns.tolist()
 
-    return pd.get_dummies(
+    df_dummies = pd.get_dummies(
         df,
         columns=cat_cols,
         drop_first=True,
         dummy_na=False
     )
+
+    # Drop rows with NaN values before train/test split. Since the number is low, it's not going to infer the data.
+    X_clean = df_dummies.dropna()
+
+    return X_clean
