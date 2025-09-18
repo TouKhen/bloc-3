@@ -6,11 +6,11 @@ def load_csv(path: str | Path) -> pd.DataFrame:
     Loads a CSV file from the specified path and returns its contents as a DataFrame.
 
     This function uses `pandas.read_csv` to read the content of the CSV file
-    and parse it into a pandas DataFrame.
+    and parse it into a panda DataFrame.
 
     :param path: The file path to the CSV file to be loaded.
     :type path: Str | Path
-    :return: A pandas DataFrame containing the data from the CSV file.
+    :return: A panda DataFrame containing the data from the CSV file.
     :rtype: Pd.DataFrame
     """
     return pd.read_csv(path)
@@ -28,7 +28,7 @@ def basic_clean(df: pd.DataFrame) -> pd.DataFrame:
     3. Converts the 'TotalCharges' column to a numeric data type. Any values that cannot
        be converted to numeric are coerced to NaN.
 
-    :param df: A pandas DataFrame containing the input data to be cleaned and preprocessed.
+    :param df: A panda DataFrame containing the input data to be cleaned and preprocessed.
     :type df: pd.DataFrame
     :return: The cleaned and preprocessed DataFrame with customer IDs removed, Churn
              encoded as binary, and TotalCharges converted to numeric.

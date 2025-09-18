@@ -233,6 +233,17 @@ class Viz:
 
 
     def roc_curve(self, y_pred_probas=None, y_test=None, labels=None) -> None:
+        """
+        Plots the Receiver Operating Characteristic (ROC) Curve for given predicted probabilities and
+        true labels. If a list of predicted probabilities and true labels is provided, it generates
+        multiple ROC curves. The Area Under the Curve (AUC) is also computed and displayed for
+        each curve.
+
+        :param y_pred_probas: List or single array-like of predicted probabilities.
+        :param y_test: List or single array-like of true labels.
+        :param labels: List of strings to label each ROC curve. Defaults to ['ROC curve'] if not provided.
+        :return: None
+        """
         # If single curve
         if not isinstance(y_pred_probas, list):
             y_pred_probas = [y_pred_probas]
