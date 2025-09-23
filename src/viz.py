@@ -298,6 +298,17 @@ class Viz:
 
 
     def residuals_scatter(self, y_test_sub, prediction):
+        """
+        Compute and display a residuals scatter plot. The residuals are calculated as
+        the difference between the true values (`y_test_sub`) and the predicted
+        values (`prediction`). The scatter plot visualizes these residuals against the
+        predicted values, which can provide insights into the prediction model's
+        performance and highlight any patterns or biases.
+
+        :param y_test_sub: Array of true target values.
+        :param prediction: Array of predicted target values.
+        :return: None
+        """
         residuals = y_test_sub - prediction
 
         plt.figure(figsize=(10, 6))
@@ -306,4 +317,18 @@ class Viz:
         plt.title('Residual Plot')
         plt.xlabel('Predicted Values')
         plt.ylabel('Residuals')
+        plt.show()
+
+
+    def plot_r2_poly_degree(self, poly_reg_scores):
+        plt.figure(figsize=(8, 6))
+        plt.bar(poly_reg_scores.keys(), poly_reg_scores.values())
+        plt.title('R² Score by Polynomial Degree')
+        plt.xlabel('Polynomial Degree')
+        plt.ylabel('R² Score')
+        plt.ylim(0, 1)
+
+        for i, v in poly_reg_scores.items():
+            plt.text(i, v + 0.01, f'{v:.3f}', ha='center')
+
         plt.show()
