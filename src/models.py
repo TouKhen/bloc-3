@@ -193,3 +193,69 @@ class Models:
         from sklearn.metrics import mean_squared_error
 
         return np.sqrt(mean_squared_error(self.y_test_sub, predictions))
+
+
+    def polynomial_features(self, X_poly, y_poly, degree):
+        """
+        Generates polynomial features for the given input data. This function splits the input
+        data into training and testing sets and returns an instance of the PolynomialFeatures
+        transformation.
+
+        :param X_poly: The input feature set to be transformed.
+        :param y_poly: The target (dependent variable) corresponding to the input features.
+        :param degree: The degree of the polynomial features to be generated.
+        :return: Instance of PolynomialFeatures initialized with the specified degree.
+        """
+        from sklearn.preprocessing import PolynomialFeatures
+
+        X_subset = X_poly
+
+        # Align y with X_subset's index to ensure identical sizes
+        y_aligned = y_poly.reindex(X_subset.index)
+
+        # If any NaN values remain, filter them safely
+        mask = y_aligned.notna()
+        if mask.any() and (~mask).any():
+            X_subset = X_subset.loc[mask]
+            y_aligned = y_aligned.loc[mask]
+
+        # Split data
+        self.X_train_poly, self.X_test_poly, self.y_train_poly, self.y_test_poly = train_test_split(X_subset, y_aligned, test_size=0.3, random_state=42)
+
+        return PolynomialFeatures(degree)
+
+
+    def find_best_degree(self, X_poly, y_poly, degrees):
+        """
+        Finds the best fitting polynomial degree by training models for each degree and
+        evaluating their performance.
+
+        This method iterates through a list of polynomial degrees, constructs a pipeline
+        with polynomial feature transformation and linear regression for each degree,
+        trains the pipeline on training data, and evaluates each model's score on the
+        test data. The method returns both the fitted models and their respective scores.
+
+        :param degrees: List of integers representing polynomial degrees to evaluate.
+        :type degrees: list[int]
+        :return: A tuple containing two entities:
+            1. Dictionary mapping degrees to their corresponding trained pipeline models.
+            2. Dictionary mapping degrees to their respective evaluation scores.
+        :rtype: tuple[dict[int, sklearn.pipeline.Pipeline], dict[int, float]]
+        """
+        from sklearn.linear_model import LinearRegression
+        from sklearn.pipeline import make_pipeline
+
+        models = {}
+        scores = {}
+
+        for degree in degrees:
+            model = make_pipeline(
+                self.polynomial_features(X_poly, y_poly, degree),
+                LinearRegression()
+            )
+
+            model.fit(self.X_train_poly, self.y_train_poly)
+            models[degree] = model
+            scores[degree] = model.score(self.X_test_poly, self.y_test_poly)
+
+        return models, scores
