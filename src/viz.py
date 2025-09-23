@@ -266,3 +266,44 @@ class Viz:
         plt.title('Receiver Operating Characteristic (ROC) Curve')
         plt.legend(loc="lower right")
         plt.show()
+
+
+    def coef_plot(self, lr_model, subset) -> None:
+        """
+        Creates a bar plot of the coefficients of features for a given linear regression model
+        and a subset of features. This visualization helps in understanding the importance or
+        impact of each feature in the trained linear regression model.
+
+        :param lr_model: A trained linear regression model whose coefficients will be used
+            for plotting.
+        :type lr_model: sklearn.linear_model._base.LinearRegression
+        :param subset: A DataFrame containing the subset of features corresponding to the
+            coefficients in the linear regression model.
+        :type subset: pandas.DataFrame
+        :return: None
+        """
+
+        coef_df = pd.DataFrame({
+            'Feature': subset.columns,
+            'Coefficient': lr_model.coef_
+        })
+
+        plt.figure(figsize=(10, 6))
+        sns.barplot(data=coef_df, x='Coefficient', y='Feature')
+        plt.title('Feature Coefficients in Linear Regression')
+        plt.xlabel('Coefficient Value')
+        plt.ylabel('Feature')
+        plt.tight_layout()
+        plt.show()
+
+
+    def residuals_scatter(self, y_test_sub, prediction):
+        residuals = y_test_sub - prediction
+
+        plt.figure(figsize=(10, 6))
+        plt.scatter(prediction, residuals, alpha=0.5)
+        plt.axhline(y=0, color='r', linestyle='--')
+        plt.title('Residual Plot')
+        plt.xlabel('Predicted Values')
+        plt.ylabel('Residuals')
+        plt.show()

@@ -13,7 +13,10 @@ def load_csv(path: str | Path) -> pd.DataFrame:
     :return: A panda DataFrame containing the data from the CSV file.
     :rtype: Pd.DataFrame
     """
-    return pd.read_csv(path)
+    try:
+        return pd.read_csv(path)
+    except Exception as e:
+        raise ValueError(f"Failed to load CSV file from {path}: {str(e)}")
 
 
 def basic_clean(df: pd.DataFrame) -> pd.DataFrame:
