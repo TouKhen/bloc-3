@@ -259,3 +259,28 @@ class Models:
             scores[degree] = model.score(self.X_test_poly, self.y_test_poly)
 
         return models, scores
+
+
+    def decision_tree(self):
+        """
+        Trains a decision tree classifier using the provided dataset. The function splits
+        the data into training and testing sets, initializes a decision tree classifier,
+        and trains it with the training set.
+
+        :raises KeyError: If the 'Churn' column is missing in the dataset during processing.
+        :raises ValueError: If the dataset contains invalid or inconsistent data.
+
+        :return: Trained decision tree classifier
+        :rtype: sklearn.tree.DecisionTreeClassifier
+        """
+        from sklearn import tree
+
+        # Drop the Churn row for the decision tree.
+        X_clean = self.df_dummies.drop(columns='Churn')
+        y_clean = self.df['Churn'][X_clean.index]
+
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_clean, y_clean, test_size=0.3, random_state=42)
+
+        clf_tree = tree.DecisionTreeClassifier()
+
+        return clf_tree.fit(self.X_train, self.y_train)

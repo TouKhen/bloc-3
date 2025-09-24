@@ -321,6 +321,16 @@ class Viz:
 
 
     def plot_r2_poly_degree(self, poly_reg_scores):
+        """
+        Plot the R² scores of polynomial regression models against their polynomial degrees.
+        This function visualizes the relationship between different polynomial degrees and their
+        corresponding R² scores using a bar chart. Each bar represents the R² score of a specific
+        polynomial degree, and its exact value is displayed as text above the bar.
+
+        :param poly_reg_scores: A dictionary where keys represent the degree of the polynomial
+            (int) and values are the corresponding R² scores (float).
+        :return: None. The function displays the plot but does not return any value.
+        """
         plt.figure(figsize=(8, 6))
         plt.bar(poly_reg_scores.keys(), poly_reg_scores.values())
         plt.title('R² Score by Polynomial Degree')
@@ -331,4 +341,30 @@ class Viz:
         for i, v in poly_reg_scores.items():
             plt.text(i, v + 0.01, f'{v:.3f}', ha='center')
 
+        plt.show()
+
+
+    def plot_tree(self, clf_tree):
+        """
+        Visualizes a decision tree classifier using matplotlib.
+
+        This method takes a decision tree classifier and generates a visual
+        representation of the tree structure using matplotlib. The tree is
+        plotted with a filled node style.
+
+        :param clf_tree: The decision tree classifier model to be plotted.
+        :type clf_tree: sklearn.tree.DecisionTreeClassifier
+        :return: None
+        """
+        from sklearn import tree
+
+        plt.figure(figsize=(25,20))
+        tree.plot_tree(clf_tree, filled=True)
+
+
+    def importance_viz_barplot(self, importances):
+        plt.figure(figsize=(10, 6))
+        sns.barplot(data=importances, x='importance', y='feature')
+        plt.title('Top 10 Most Important Features in Decision Tree')
+        plt.xlabel('Feature Importance')
         plt.show()
