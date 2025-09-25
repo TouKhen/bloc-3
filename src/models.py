@@ -287,6 +287,16 @@ class Models:
 
 
     def random_forest(self):
+        """
+        Trains a Random Forest classifier on the dataset, splitting it into training and testing
+        sets, and returns the fitted model. The target variable 'Churn' is excluded from input
+        features during training.
+
+        :raises KeyError: If the 'Churn' column is not found in the dataset.
+        :raises ValueError: If the dataset is not suitable for splitting or training a model.
+        :return: Trained Random Forest classifier.
+        :rtype: sklearn.ensemble.RandomForestClassifier
+        """
         from sklearn.ensemble import RandomForestClassifier
 
         # Drop the Churn row for the random forest.

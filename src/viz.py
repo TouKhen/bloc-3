@@ -387,3 +387,92 @@ class Viz:
         plt.title(f'Top {len(importances)} Most Important Features in {name} Model')
         plt.xlabel('Feature Importance')
         plt.show()
+
+
+    def scores_comparison_plot(self, metrics):
+        """
+        Generates a series of bar plots to compare a set of classification metrics across
+        different models or configurations.
+
+        The function takes in a dictionary containing metric scores (Precision, Recall,
+        F1, and AUC) for each model. It creates a 2x2 grid of subplots, where each subplot
+        represents one of the metrics, and displays a side-by-side bar plot for the models.
+        The function ensures the y-axis for each plot ranges from 0 to 1 to enhance
+        comparability.
+
+        :param metrics: A dictionary where keys are model names or configurations and
+            values are nested dictionaries containing the metrics ('Precision', 'Recall',
+            'F1', and 'AUC') as keys and their corresponding scores as values.
+            Example:
+                {
+                    "Model_1": {"Precision": 0.85, "Recall": 0.80, "F1": 0.82, "AUC": 0.90},
+                    "Model_2": {"Precision": 0.83, "Recall": 0.78, "F1": 0.80, "AUC": 0.89}
+                }
+
+        :return: None
+        """
+        # Create comparison plots
+        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
+
+        metrics_df = pd.DataFrame(metrics).T
+
+        # Precision plot
+        metrics_df['Precision'].plot(kind='bar', ax=ax1, color='skyblue')
+        ax1.set_title('Precision Comparison')
+        ax1.set_ylim(0, 1)
+
+        # Recall plot
+        metrics_df['Recall'].plot(kind='bar', ax=ax2, color='lightgreen')
+        ax2.set_title('Recall Comparison')
+        ax2.set_ylim(0, 1)
+
+        # F1 plot
+        metrics_df['F1'].plot(kind='bar', ax=ax3, color='lightcoral')
+        ax3.set_title('F1 Score Comparison')
+        ax3.set_ylim(0, 1)
+
+        # AUC plot
+        metrics_df['AUC'].plot(kind='bar', ax=ax4, color='plum')
+        ax4.set_title('AUC Score Comparison')
+        ax4.set_ylim(0, 1)
+
+        plt.tight_layout()
+        plt.show()
+
+
+    def cross_validation_comparison_plot(self, models):
+        """
+        Generates a bar plot comparing the mean and standard deviation of cross-validation
+        scores for multiple models. The input `models` should be a dictionary where keys
+        are model names and values are lists of cross-validation scores.
+
+        The function computes the mean and standard deviation for each model, and visualizes
+        them using a bar plot with error bars. Each bar represents a model's average score
+        with corresponding error bars indicating its standard deviation.
+
+        :param models: A dictionary where keys are model names (str) and values are lists
+            of cross-validation scores (list of floats).
+        :type models: dict
+        :return: None
+        """
+        import numpy as np
+
+        means = {name: np.mean(scores) for name, scores in models.items()}
+        stds = {name: np.std(scores) for name, scores in models.items()}
+
+        # Plot comparison
+        plt.figure(figsize=(10, 6))
+        plt.bar(range(len(means)), means.values(), yerr=stds.values(),
+                capsize=5, color=['skyblue', 'lightgreen', 'salmon', 'purple', 'orange'])
+        plt.xticks(range(len(means)), means.keys(), rotation=45)
+        plt.title('Cross-Validation Scores Comparison')
+        plt.ylabel('Mean CV Score')
+        plt.ylim(0, 1)
+
+        # Add value labels
+        for i, v in enumerate(means.values()):
+            plt.text(i, v + stds[list(means.keys())[i]], f'{v:.3f}',
+                     ha='center', va='bottom')
+
+        plt.tight_layout()
+        plt.show()
