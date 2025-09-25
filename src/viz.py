@@ -362,9 +362,28 @@ class Viz:
         tree.plot_tree(clf_tree, filled=True)
 
 
-    def importance_viz_barplot(self, importances):
+    def importance_viz_barplot(self, importances, name):
+        """
+        Generates a bar plot visualization of feature importances for a specific model.
+
+        This function creates a horizontal bar plot for representing feature importance
+        data by using Matplotlib and Seaborn libraries. The plot is titled to
+        indicate the model's name, and it highlights the most important features
+        in descending order of their importance.
+
+        :param importances:
+            A pandas DataFrame containing feature importance information. It is
+            expected to have at least two columns:
+            - 'feature': Names of the features.
+            - 'importance': Importance scores for the features (assumed to be numerical).
+        :param name:
+            A string representing the name of the model whose feature
+            importance is visualized.
+        :return:
+            None
+        """
         plt.figure(figsize=(10, 6))
         sns.barplot(data=importances, x='importance', y='feature')
-        plt.title('Top 10 Most Important Features in Decision Tree')
+        plt.title(f'Top {len(importances)} Most Important Features in {name} Model')
         plt.xlabel('Feature Importance')
         plt.show()

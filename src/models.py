@@ -284,3 +284,17 @@ class Models:
         clf_tree = tree.DecisionTreeClassifier()
 
         return clf_tree.fit(self.X_train, self.y_train)
+
+
+    def random_forest(self):
+        from sklearn.ensemble import RandomForestClassifier
+
+        # Drop the Churn row for the random forest.
+        X_clean = self.df_dummies.drop(columns='Churn')
+        y_clean = self.df['Churn'][X_clean.index]
+
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_clean, y_clean, test_size=0.3, random_state=42)
+
+        clf_forest = RandomForestClassifier(random_state=42)
+
+        return clf_forest.fit(self.X_train, self.y_train)
