@@ -261,7 +261,7 @@ class Models:
         return models, scores
 
 
-    def decision_tree(self):
+    def decision_tree(self, params=None):
         """
         Trains a decision tree classifier using the provided dataset. The function splits
         the data into training and testing sets, initializes a decision tree classifier,
@@ -281,12 +281,12 @@ class Models:
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_clean, y_clean, test_size=0.3, random_state=42)
 
-        clf_tree = tree.DecisionTreeClassifier()
+        clf_tree = tree.DecisionTreeClassifier(**params) if params else tree.DecisionTreeClassifier()
 
         return clf_tree.fit(self.X_train, self.y_train)
 
 
-    def random_forest(self):
+    def random_forest(self, params=None):
         """
         Trains a Random Forest classifier on the dataset, splitting it into training and testing
         sets, and returns the fitted model. The target variable 'Churn' is excluded from input
@@ -305,6 +305,15 @@ class Models:
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_clean, y_clean, test_size=0.3, random_state=42)
 
-        clf_forest = RandomForestClassifier(random_state=42)
+        clf_forest = RandomForestClassifier(random_state=42, **params) if params else RandomForestClassifier(
+            random_state=42
+        )
 
         return clf_forest.fit(self.X_train, self.y_train)
+
+
+    def grid_search(self, model, parameters):
+        from sklearn.model_selection import GridSearchCV
+
+        svc_grid = GridSearchCV(model, parameters, cv=5, scoring='accuracy')
+        return svc_grid.fit(self.X_train, self.y_train)

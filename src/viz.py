@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 from sklearn.metrics import confusion_matrix, precision_score, f1_score, \
-    accuracy_score, roc_curve, auc
+    accuracy_score, roc_curve, auc, roc_auc_score
 
 
 class Viz:
@@ -475,4 +475,49 @@ class Viz:
                      ha='center', va='bottom')
 
         plt.tight_layout()
+        plt.show()
+
+
+    def grid_search_plot(self, metrics_comparison, old_model, old_model_class, new_model, new_model_class):
+        # Create subplots for each metric
+        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 10))
+
+        # Plot each metric
+        metrics = ['Accuracy', 'Precision', 'Recall', 'F1']
+        colors = ['skyblue', 'lightgreen']
+
+        for metric, ax in zip(metrics, [ax1, ax2, ax3, ax4]):
+            values = [metrics_comparison['Original'][metric],
+                      metrics_comparison['Tuned'][metric]]
+            ax.bar(['Original', 'Tuned'], values, color=colors)
+            ax.set_title(f'{metric} Comparison')
+            ax.set_ylim(0, 1)
+
+            # Add value labels
+            for i, v in enumerate(values):
+                ax.text(i, v + 0.01, f'{v:.3f}', ha='center')
+
+        plt.tight_layout()
+        plt.show()
+
+        # Plot ROC curves for both models
+        plt.figure(figsize=(8, 6))
+
+        # Original model ROC curve
+        fpr_orig, tpr_orig, _ = roc_curve(old_model_class.y_test, old_model.predict_proba(old_model_class.X_test)[:, 1])
+        plt.plot(fpr_orig, tpr_orig, color='skyblue',
+                 label=f'Original (AUC = {roc_auc_score(old_model_class.y_test, old_model.predict_proba(old_model_class.X_test)[:, 1]):.3f})')
+
+        # Tuned model ROC curve
+        fpr_tuned, tpr_tuned, _ = roc_curve(new_model_class.y_test, new_model.predict_proba(new_model_class.X_test)[:, 1])
+        plt.plot(fpr_tuned, tpr_tuned, color='lightgreen',
+                 label=f'Tuned (AUC = {roc_auc_score(new_model_class.y_test, new_model.predict_proba(new_model_class.X_test)[:, 1]):.3f})')
+
+        plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC Curves Comparison')
+        plt.legend(loc="lower right")
         plt.show()
