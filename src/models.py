@@ -19,7 +19,7 @@ class Models:
         self.df_dummies = df_dummies
 
 
-    def logistic_regression(self) -> linear_model.LogisticRegression:
+    def logistic_regression(self, params=None) -> linear_model.LogisticRegression:
         """
         Fits and trains a logistic regression model on the provided dataset.
 
@@ -41,7 +41,7 @@ class Models:
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_clean, y_clean, test_size=0.3, random_state=42)
 
-        logreg = linear_model.LogisticRegression(max_iter=10000)
+        logreg = linear_model.LogisticRegression(max_iter=10000, **params) if params else linear_model.LogisticRegression(max_iter=10000)
         logreg.fit(self.X_train, self.y_train)
 
         return logreg

@@ -479,6 +479,31 @@ class Viz:
 
 
     def grid_search_plot(self, metrics_comparison, old_model, old_model_class, new_model, new_model_class):
+        """
+        Plots the comparison of multiple metrics (Accuracy, Precision, Recall, F1) between
+        two models, and their respective ROC curves. The function creates a visual comparison
+        of an original model and a tuned model, with subplots for each metric and a separate
+        plot for the ROC curves. Metrics are displayed as bar plots, and ROC/AUC metrics
+        are presented as line graphs.
+
+        :param metrics_comparison: A dictionary containing metric values (e.g. Accuracy,
+            Precision, Recall, F1) for the models being compared. The keys should include 'Original'
+            and 'Tuned', with associated metrics as subkeys.
+        :type metrics_comparison: dict
+        :param old_model: The original, 'untuned' machine learning model. Must be a model
+            object with a `predict_proba` method.
+        :param old_model_class: An object encapsulating the test data (`X_test`, `y_test`).
+            Must provide a `y_test` attribute and `X_test` attribute for predictions.
+        :type old_model_class: object
+        :param new_model: The optimized or tuned machine learning model. Must be a model
+            object with a `predict_proba` method.
+        :param new_model_class: An object encapsulating test data (`X_test`, `y_test`)
+            for the tuned model. Must provide a `y_test` attribute and `X_test` attribute
+            for predictions.
+        :type new_model_class: object
+
+        :return: None
+        """
         # Create subplots for each metric
         fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 10))
 
