@@ -30,6 +30,28 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     return X_clean
 
 def cross_validation(models, cv=5):
+    """
+    Performs k-fold cross-validation for a given set of models and computes evaluation
+    metrics including accuracy, precision, recall, and F1 score based on the provided
+    data and specified number of splits. The function returns a dictionary containing
+    the mean and standard deviation for each computed metric.
+
+    Key metrics evaluated:
+    - Accuracy
+    - Precision
+    - Recall
+    - F1 score
+
+    :param models: A dictionary where each key is the model name (str) and the value
+        is another dictionary containing the model ('model') and its corresponding
+        cleaned data ('data'). The 'data' object should have `X_clean` and `y_clean`
+        attributes representing features and labels respectively.
+    :param cv: An integer specifying the number of folds for k-fold cross-validation.
+        The default value is 5.
+
+    :return: A dictionary where each key corresponds to a model name and contains
+        nested evaluation metrics. Each metric has its mean and standard deviation.
+    """
     from sklearn.model_selection import KFold, cross_val_score
     from sklearn.metrics import make_scorer, accuracy_score, precision_score, \
         recall_score, f1_score

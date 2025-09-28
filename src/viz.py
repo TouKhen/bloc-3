@@ -549,6 +549,30 @@ class Viz:
 
 
     def cv_plot(self, cv_results, models):
+        """
+        Plots cross-validation results for multiple models.
+
+        This function generates bar plots for evaluation metrics such as accuracy,
+        precision, recall, and F1-score. Each plot displays the mean values along
+        with error bars representing the standard deviation for the specified metrics.
+        The results are visualized using a grid layout.
+
+        :param cv_results: A dictionary containing cross-validation results for
+            each model. The format should be:
+            {
+                'model_name': {
+                    'accuracy': {'mean': float, 'std': float},
+                    'precision': {'mean': float, 'std': float},
+                    'recall': {'mean': float, 'std': float},
+                    'f1': {'mean': float, 'std': float}
+                },
+                ...
+            }
+        :param dict models: A dictionary containing model names as keys and their
+            corresponding estimators or classifiers as values. The keys are used in the
+            plot as labels.
+        :return: None
+        """
         import numpy as np
 
         # Plot results
