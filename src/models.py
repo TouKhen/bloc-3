@@ -21,25 +21,22 @@ class Models:
 
     def logistic_regression(self, params=None) -> linear_model.LogisticRegression:
         """
-        Fits and trains a logistic regression model on the provided dataset.
+        Perform logistic regression on the dataset, training and testing the model
+        with the provided or default parameters.
 
-        This method performs logistic regression on the dataset preprocessed in
-        the class. It separates the feature variables from the target variable,
-        splits the data into training and testing subsets, and fits the logistic
-        regression model on the training data. This method finally returns the
-        trained logistic regression model instance.
-
-        :raises ValueError: If there are issues in training the model or
-            with data inconsistency during operations.
-
-        :return: A trained logistic regression model instance.
-        :rtype: sklearn.linear_model._base.LogisticRegression
+        :param params: Optional; a dictionary of parameters to be passed to the
+                       LogisticRegression model.
+                       If None, default parameters are used.
+                       Defaults to None.
+        :type params: dict, optional
+        :return: Trained LogisticRegression model.
+        :rtype: linear_model.LogisticRegression
         """
         # Drop Churn row for the logistic regression.
-        X_clean = self.df_dummies.drop(columns='Churn')
-        y_clean = self.df['Churn'][X_clean.index]
+        self.X_clean = self.df_dummies.drop(columns='Churn')
+        self.y_clean = self.df['Churn'][self.X_clean.index]
 
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_clean, y_clean, test_size=0.3, random_state=42)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X_clean, self.y_clean, test_size=0.3, random_state=42)
 
         logreg = linear_model.LogisticRegression(max_iter=10000, **params) if params else linear_model.LogisticRegression(max_iter=10000)
         logreg.fit(self.X_train, self.y_train)
@@ -263,23 +260,26 @@ class Models:
 
     def decision_tree(self, params=None):
         """
-        Trains a decision tree classifier using the provided dataset. The function splits
-        the data into training and testing sets, initializes a decision tree classifier,
-        and trains it with the training set.
+        Builds and trains a decision tree classifier using the provided data and optional parameters.
 
-        :raises KeyError: If the 'Churn' column is missing in the dataset during processing.
-        :raises ValueError: If the dataset contains invalid or inconsistent data.
+        This method splits the dataset into training and testing sets, excluding the target
+        column 'Churn' for predictions. A decision tree classifier is then trained on the
+        training data. The classifier can be optionally configured through the `params`
+        parameter.
 
-        :return: Trained decision tree classifier
+        :param params: Optional dictionary of parameters to configure the decision tree
+            classifier. Defaults to None.
+        :type params: dict, optional
+        :return: Trained decision tree classifier object.
         :rtype: sklearn.tree.DecisionTreeClassifier
         """
         from sklearn import tree
 
         # Drop the Churn row for the decision tree.
-        X_clean = self.df_dummies.drop(columns='Churn')
-        y_clean = self.df['Churn'][X_clean.index]
+        self.X_clean = self.df_dummies.drop(columns='Churn')
+        self.y_clean = self.df['Churn'][self.X_clean.index]
 
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_clean, y_clean, test_size=0.3, random_state=42)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X_clean, self.y_clean, test_size=0.3, random_state=42)
 
         clf_tree = tree.DecisionTreeClassifier(**params) if params else tree.DecisionTreeClassifier()
 
@@ -288,22 +288,24 @@ class Models:
 
     def random_forest(self, params=None):
         """
-        Trains a Random Forest classifier on the dataset, splitting it into training and testing
-        sets, and returns the fitted model. The target variable 'Churn' is excluded from input
-        features during training.
+        Fits a RandomForestClassifier model using the provided parameters. If no parameters
+        are supplied, the default configuration for the classifier is used. The method
+        divides the input dataset into training and testing subsets with a 70-30 split ratio
+        and fits the Random Forest model on training data. The target column for prediction
+        is 'Churn', which is removed from the input feature set.
 
-        :raises KeyError: If the 'Churn' column is not found in the dataset.
-        :raises ValueError: If the dataset is not suitable for splitting or training a model.
-        :return: Trained Random Forest classifier.
+        :param params: Optional dictionary of parameters to initialize the RandomForestClassifier.
+        :type params: dict or None
+        :return: A fitted RandomForestClassifier model.
         :rtype: sklearn.ensemble.RandomForestClassifier
         """
         from sklearn.ensemble import RandomForestClassifier
 
         # Drop the Churn row for the random forest.
-        X_clean = self.df_dummies.drop(columns='Churn')
-        y_clean = self.df['Churn'][X_clean.index]
+        self.X_clean = self.df_dummies.drop(columns='Churn')
+        self.y_clean = self.df['Churn'][self.X_clean.index]
 
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X_clean, y_clean, test_size=0.3, random_state=42)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X_clean, self.y_clean, test_size=0.3, random_state=42)
 
         clf_forest = RandomForestClassifier(random_state=42, **params) if params else RandomForestClassifier(
             random_state=42
@@ -313,6 +315,17 @@ class Models:
 
 
     def grid_search(self, model, parameters):
+        """
+        Perform grid search cross-validation on the provided model using the given
+        parameters to optimize for accuracy.
+
+        :param model: The machine learning model for which the grid search will be
+                      performed.
+        :param parameters: Dictionary containing the set of hyperparameters and
+                           their corresponding values/ranges for grid search.
+        :return: A fitted GridSearchCV object with the model trained on the
+                 optimal hyperparameters.
+        """
         from sklearn.model_selection import GridSearchCV
 
         svc_grid = GridSearchCV(model, parameters, cv=5, scoring='accuracy')

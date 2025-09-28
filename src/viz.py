@@ -546,3 +546,32 @@ class Viz:
         plt.title('ROC Curves Comparison')
         plt.legend(loc="lower right")
         plt.show()
+
+
+    def cv_plot(self, cv_results, models):
+        import numpy as np
+
+        # Plot results
+        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
+
+        metrics = ['accuracy', 'precision', 'recall', 'f1']
+        axes = [ax1, ax2, ax3, ax4]
+        colors = ['skyblue', 'lightgreen', 'salmon']
+
+        for metric, ax in zip(metrics, axes):
+            means = [cv_results[model][metric]['mean'] for model in models.keys()]
+            stds = [cv_results[model][metric]['std'] for model in models.keys()]
+
+            x = np.arange(len(models))
+            ax.bar(x, means, yerr=stds, capsize=5, color=colors)
+            ax.set_xticks(x)
+            ax.set_xticklabels(models.keys(), rotation=45)
+            ax.set_title(f'{metric.capitalize()} Score')
+            ax.set_ylim(0, 1)
+
+            # Add value labels
+            for i, v in enumerate(means):
+                ax.text(i, v + stds[i], f'{v:.3f}', ha='center', va='bottom')
+
+        plt.tight_layout()
+        plt.show()
